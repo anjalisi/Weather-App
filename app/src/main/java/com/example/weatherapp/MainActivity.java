@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,9 +21,14 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    EditText cityName;
     public void findWeather(View view)
     {
-        
+
+        DownloadJSON task= new DownloadJSON();
+        task.execute("https://samples.openweathermap.org/data/2.5/weather?q="+cityName.getText().toString()+"&appid=439d4b804bc8187953eb36d2a8c26a02");
+
+        Log.i("City Name", cityName.getText().toString());
     }
     public class DownloadJSON extends AsyncTask<String, Void, String>
     {
@@ -83,5 +89,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cityName= (EditText)findViewById(R.id.location);
     }
 }
