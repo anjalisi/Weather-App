@@ -20,9 +20,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,8 +35,17 @@ public class MainActivity extends AppCompatActivity {
         //We need to remove the keyboard so the person can look at the result
         InputMethodManager inputMethodManager= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);  //gets the keyboard
         inputMethodManager.hideSoftInputFromWindow(cityName.getWindowToken(),0);   //removes the keyboard
-        DownloadJSON task= new DownloadJSON();
-        task.execute("https://samples.openweathermap.org/data/2.5/weather?q="+cityName.getText().toString()+"&appid=439d4b804bc8187953eb36d2a8c26a02");
+
+        try {
+            String encodedCityName= URLEncoder.encode(cityName.getText().toString(),"UTF-8");
+            DownloadJSON task= new DownloadJSON();
+            task.execute("https://api.openweathermap.org/data/2.5/weather?q="+encodedCityName+"&appid=0e8f283a0a8f5b1f121b82d69ee1ccf2");
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "We could not find that city :(", Toast.LENGTH_SHORT).show();
+        }
+
 
         Log.i("City Name", cityName.getText().toString());
     }
@@ -64,9 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             catch (Exception e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "We could not find that city :(", Toast.LENGTH_SHORT);
             }
             return null;
         }
@@ -79,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
                 String message="";
                 JSONObject jsonObject = new JSONObject(result);
                 //Step 2: Extracting the favourable part
-                String weatherinfo = jsonObject.getString("weather");    //Extracts the weather part
+                String weatherinfo = jsonObject.getString("weather");
+                String tempAndPressure = jsonObject.getString("main"); //Extracts the weather part
                 Log.i("Weather Content", weatherinfo);
-
+                Log.i("Temp", tempAndPressure);
                 //Step 3: Looping through the data
                 JSONArray jsonArray = new JSONArray(weatherinfo);
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -110,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "We could not find that city :(", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
         }
     }
