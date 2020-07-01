@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 JSONArray jsonArray = new JSONArray(weatherinfo);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonPart = jsonArray.getJSONObject(i);
-
                     String main="";
                     String desc="";
 
